@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Study Planner</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-mark">
+                S
+            </div>
+
+            <span>
+                Study Planner
+            </span>
+
+        </div>
+
+
+        <div class="side-section">
+
+            <p>
+                WORKSPACE
+            </p>
+
+            <a href="#tasks" class="side-link active">
+                <span>01</span>
+                Tasks
+            </a>
+
+            <a href="#how-it-works" class="side-link">
+                <span>02</span>
+                How it works
+            </a>
+
+        </div>
+
+
+        <div class="side-section subject-side">
+
+            <p>
+                SUBJECTS
+            </p>
+
+            <div id="sideSubjects">
+                <span>No subjects yet</span>
+            </div>
+
+        </div>
+
+
+        <div class="sidebar-bottom">
+
+            <button id="addTaskBtn">
+                + Add Task
+            </button>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+        <header class="topbar">
+
+            <div>
+
+                <p class="date-label" id="todayDate">
+                    TODAY
+                </p>
+
+                <h1>
+                    Study Planner
+                </h1>
+
+            </div>
+
+
+            <button
+                class="mobile-add"
+                id="mobileAddBtn">
+
+                + Add Task
+
+            </button>
+
+        </header>
+
+
+
+        <!-- OVERVIEW -->
+
+        <section class="overview">
+
+
+            <div class="welcome">
+
+                <p class="eyebrow">
+                    YOUR WORKLOAD
+                </p>
+
+                <h2>
+                    What needs<br>
+                    your attention?
+                </h2>
+
+                <p>
+                    Keep track of assignments, tests
+                    and projects without losing sight
+                    of what's due next.
+                </p>
+
+            </div>
+
+
+            <div class="next-panel">
+
+                <div class="panel-heading">
+
+                    <span>
+                        NEXT UP
+                    </span>
+
+                    <span class="arrow">
+                        →
+                    </span>
+
+                </div>
+
+
+                <div id="nextTask">
+
+                    <p class="empty-next">
+                        No tasks added yet.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- TASKS -->
+
+        <section
+            id="tasks"
+            class="tasks-section">
+
+
+            <div class="task-heading">
+
+                <div>
+
+                    <p class="eyebrow">
+                        WORKSPACE
+                    </p>
+
+                    <h2>
+                        Your Tasks
+                    </h2>
+
+                </div>
+
+
+                <span id="taskCount">
+                    No tasks
+                </span>
+
+            </div>
+
+
+
+            <div class="controls">
+
+                <input
+                    type="text"
+                    id="search"
+                    placeholder="Search..."
+                >
+
+
+                <select id="subjectFilter">
+
+                    <option value="all">
+                        All Subjects
+                    </option>
+
+                </select>
+
+
+                <select id="typeFilter">
+
+                    <option value="all">
+                        All Types
+                    </option>
+
+                    <option value="Assignment">
+                        Assignment
+                    </option>
+
+                    <option value="Test">
+                        Test
+                    </option>
+
+                    <option value="Project">
+                        Project
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
+                </select>
+
+
+                <select id="sort">
+
+                    <option value="deadline">
+                        Deadline
+                    </option>
+
+                    <option value="priority">
+                        Priority
+                    </option>
+
+                    <option value="time">
+                        Study Time
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <div
+                class="task-list"
+                id="taskList">
+
+            </div>
+
+        </section>
+
+
+
+        <!-- HOW IT WORKS -->
+
+        <section
+            class="how"
+            id="how-it-works">
+
+
+            <div class="how-title">
+
+                <p class="eyebrow">
+                    ABOUT THE PLANNER
+                </p>
+
+                <h2>
+                    A simpler way<br>
+                    to plan college work.
+                </h2>
+
+            </div>
+
+
+            <div class="how-list">
+
+
+                <div class="how-item">
+
+                    <span>
+                        01
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            Add your work
+                        </h3>
+
+                        <p>
+                            Add assignments, tests and
+                            projects with their deadlines.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="how-item">
+
+                    <span>
+                        02
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            Set priorities
+                        </h3>
+
+                        <p>
+                            Tell the planner how important
+                            each task is and how long it may take.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="how-item">
+
+                    <span>
+                        03
+                    </span>
+
+                    <div>
+
+                        <h3>
+                            See what's next
+                        </h3>
+
+                        <p>
+                            The planner considers deadlines,
+                            priority and study time.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <footer>
+
+            <span>
+                Study Planner
+            </span>
+
+            <span>
+                Web Development Project
+            </span>
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- MODAL -->
+
+<div
+    class="modal hidden"
+    id="modal">
+
+
+    <div class="modal-content">
+
+
+        <button
+            class="close"
+            id="close">
+
+            ×
+
+        </button>
+
+
+        <p class="eyebrow">
+            NEW TASK
+        </p>
+
+
+        <h2>
+            What do you need to do?
+        </h2>
+
+
+        <input
+            type="text"
+            id="taskName"
+            placeholder="Task name"
+        >
+
+
+        <div class="form-row">
+
+            <input
+                type="text"
+                id="taskSubject"
+                placeholder="Subject"
+            >
+
+
+            <select id="taskType">
+
+                <option>
+                    Assignment
+                </option>
+
+                <option>
+                    Test
+                </option>
+
+                <option>
+                    Project
+                </option>
+
+                <option>
+                    Other
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-row">
+
+            <div>
+
+                <label for="taskDate">
+                    Deadline
+                </label>
+
+                <input
+                    type="date"
+                    id="taskDate"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label for="taskHours">
+                    Estimated hours
+                </label>
+
+                <input
+                    type="number"
+                    id="taskHours"
+                    min="0.5"
+                    step="0.5"
+                    placeholder="2"
+                >
+
+            </div>
+
+        </div>
+
+
+        <label for="taskPriority">
+            Priority
+        </label>
+
+
+        <select id="taskPriority">
+
+            <option value="1">
+                Low
+            </option>
+
+            <option value="2">
+                Medium
+            </option>
+
+            <option value="3">
+                High
+            </option>
+
+        </select>
+
+
+        <button
+            class="save-btn"
+            id="saveTask">
+
+            Add Task
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<div
+    class="toast hidden"
+    id="toast">
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
