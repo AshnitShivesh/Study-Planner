@@ -1,185 +1,145 @@
-let tasks = JSON.parse(
-    localStorage.getItem("studyTasks")
-) || [];
+let tasks = JSON.parse(localStorage.getItem("studyTasks")) || [];
 
-let search =
-    document.getElementById("search");
+const modal = document.getElementById("modal");
+const taskList = document.getElementById("taskList");
+const nextTask = document.getElementById("nextTask");
+const taskCount = document.getElementById("taskCount");
 
-let subjectFilter =
-    document.getElementById("subjectFilter");
+const search = document.getElementById("search");
+const subjectFilter = document.getElementById("subjectFilter");
+const typeFilter = document.getElementById("typeFilter");
+const sort = document.getElementById("sort");
 
-let typeFilter =
-    document.getElementById("typeFilter");
-
-let sort =
-    document.getElementById("sort");
-
-let taskList =
-    document.getElementById("taskList");
-
-let taskCount =
-    document.getElementById("taskCount");
-
-let nextTask =
-    document.getElementById("nextTask");
-
-let modal =
-    document.getElementById("modal");
-
-let taskPriority = 1;
-
+const sideSubjects = document.getElementById("sideSubjects");
 
 function saveTasks() {
-
-    localStorage.setItem(
-        "studyTasks",
-        JSON.stringify(tasks)
-    );
-
+    localStorage.setItem("studyTasks", JSON.stringify(tasks));
 }
 
-
-function getPriorityText(priority) {
-
-    if (priority == 3) {
-        return "HIGH";
-    }
-
-    if (priority == 2) {
-        return "MEDIUM";
-    }
-
-    return "LOW";
-
+function openModal() {
+    modal.classList.remove("hidden");
 }
 
-
-function getPriorityClass(priority) {
-
-    if (priority == 3) {
-        return "priority-high";
-    }
-
-    if (priority == 2) {
-        return "priority-medium";
-    }
-
-    return "priority-low";
-
+function closeModal() {
+    modal.classList.add("hidden");
 }
 
+document.getElementById("addTaskBtn").addEventListener("click", openModal);
+
+const mobileAddBtn = document.getElementById("mobileAddBtn");
+
+if (mobileAddBtn) {
+    mobileAddBtn.addEventListener("click", openModal);
+}
+
+document.getElementById("close").addEventListener("click", closeModal);
+
+modal.addEventListener("click", function(event) {
+    if (event.target === modal) {
+        closeModal();
+    }
+});
+
+document.getElementById("saveTask").addEventListener("click", function() {
+
+    const name = document.getElementById("taskName").value.trim();
+    const subject = document.getElementById("taskSubject").value.trim();
+    const type = document.getElementById("taskType").value;
+    const deadline = document.getElementById("taskDate").value;
+    const hours = Number(document.getElementById("taskHours").value);
+    const priority = Number(document.getElementById("taskPriority").value);
+
+    if (name === "" || subject === "" || deadline === "" || hours <= 0) {
+        alert("Please fill in all the fields.");
+        return;
+    }
+
+    const task = {
+        id: Date.now(),
+        name: name,
+        subject: subject,
+        type: type,
+        deadline: deadline,
+        hours: hours,
+        priority: priority,
+        completed: false
+    };
+
+    tasks.unshift(task);
+
+    saveTasks();
+    updateSubjects();
+    updateSidebarSubjects();
+    displayTasks();
+
+    document.getElementById("taskName").value = "";
+    document.getElementById("taskSubject").value = "";
+    document.getElementById("taskDate").value = "";
+    document.getElementById("taskHours").value = "";
+
+    closeModal();
+
+    showMessage("Task added.");
+});
 
 function displayTasks() {
 
-    let filteredTasks = [...tasks];
+    let filtered = [...tasks];
 
-    let searchText =
-        search.value.toLowerCase();
-
+    const searchText = search.value.toLowerCase();
 
     if (searchText !== "") {
-
-        filteredTasks =
-            filteredTasks.filter(function(task) {
-
-                return (
-                    task.name
-                        .toLowerCase()
-                        .includes(searchText) ||
-
-                    task.subject
-                        .toLowerCase()
-                        .includes(searchText)
-                );
-
-            });
-
+        filtered = filtered.filter(function(task) {
+            return (
+                task.name.toLowerCase().includes(searchText) ||
+                task.subject.toLowerCase().includes(searchText)
+            );
+        });
     }
-
 
     if (subjectFilter.value !== "all") {
-
-        filteredTasks =
-            filteredTasks.filter(function(task) {
-
-                return task.subject ===
-                    subjectFilter.value;
-
-            });
-
+        filtered = filtered.filter(function(task) {
+            return task.subject === subjectFilter.value;
+        });
     }
-
 
     if (typeFilter.value !== "all") {
-
-        filteredTasks =
-            filteredTasks.filter(function(task) {
-
-                return task.type ===
-                    typeFilter.value;
-
-            });
-
+        filtered = filtered.filter(function(task) {
+            return task.type === typeFilter.value;
+        });
     }
-
 
     if (sort.value === "deadline") {
-
-        filteredTasks.sort(function(a, b) {
-
-            return new Date(a.deadline) -
-                new Date(b.deadline);
-
+        filtered.sort(function(a, b) {
+            return new Date(a.deadline) - new Date(b.deadline);
         });
-
     }
-
 
     if (sort.value === "priority") {
-
-        filteredTasks.sort(function(a, b) {
-
-            return b.priority -
-                a.priority;
-
+        filtered.sort(function(a, b) {
+            return b.priority - a.priority;
         });
-
     }
-
 
     if (sort.value === "time") {
-
-        filteredTasks.sort(function(a, b) {
-
-            return b.hours -
-                a.hours;
-
+        filtered.sort(function(a, b) {
+            return b.hours - a.hours;
         });
-
     }
 
-
-    let activeTasks =
-        tasks.filter(function(task) {
-
-            return !task.completed;
-
-        });
-
+    const activeTasks = tasks.filter(function(task) {
+        return !task.completed;
+    });
 
     taskCount.textContent =
         activeTasks.length +
-        " active task" +
-        (activeTasks.length === 1 ? "" : "s");
-
+        (activeTasks.length === 1 ? " active task" : " active tasks");
 
     updateNextTask(activeTasks);
 
-
-    if (filteredTasks.length === 0) {
+    if (filtered.length === 0) {
 
         taskList.innerHTML = `
-
             <div class="empty">
 
                 <div class="empty-icon">
@@ -198,57 +158,36 @@ function displayTasks() {
                     }
                 </p>
 
-                <button
-                    class="main-btn"
-                    id="emptyAdd">
-
+                <button class="save-btn" id="emptyAdd">
                     Add Task
-
                 </button>
 
             </div>
-
         `;
 
-
-        document
-            .getElementById("emptyAdd")
-            .addEventListener(
-                "click",
-                openModal
-            );
-
+        document.getElementById("emptyAdd").addEventListener(
+            "click",
+            openModal
+        );
 
         return;
-
     }
-
 
     taskList.innerHTML = "";
 
+    filtered.forEach(function(task) {
 
-    filteredTasks.forEach(function(task) {
-
-        let element =
-            document.createElement("div");
-
+        const element = document.createElement("div");
 
         element.className =
-            "task" +
-            (task.completed
-                ? " completed"
-                : "");
-
+            "task" + (task.completed ? " completed" : "");
 
         element.innerHTML = `
 
             <button
-                class="complete-box ${
-                    task.completed ? "done" : ""
-                }"
+                class="complete-box ${task.completed ? "done" : ""}"
                 data-id="${task.id}">
             </button>
-
 
             <div>
 
@@ -257,107 +196,60 @@ function displayTasks() {
                 </div>
 
                 <div class="task-info">
-
-                    ${task.subject}
-                    ·
-                    ${task.type}
-
+                    ${task.subject} · ${task.type}
                 </div>
 
             </div>
-
 
             <div class="task-right">
 
                 <div class="task-deadline">
-
                     ${formatDate(task.deadline)}
-
                 </div>
 
                 <div class="task-hours">
-
-                    ${task.hours} hour${
-                        task.hours == 1 ? "" : "s"
-                    }
-
+                    ${task.hours} hour${task.hours == 1 ? "" : "s"}
                 </div>
 
-                <span
-                    class="priority ${
-                        getPriorityClass(task.priority)
-                    }">
-
+                <span class="priority ${getPriorityClass(task.priority)}">
                     ${getPriorityText(task.priority)}
-
                 </span>
 
             </div>
-
         `;
 
-
         taskList.appendChild(element);
-
     });
 
+    document.querySelectorAll(".complete-box").forEach(function(button) {
 
-    document
-        .querySelectorAll(".complete-box")
-        .forEach(function(button) {
-
-            button.addEventListener(
-                "click",
-                function() {
-
-                    completeTask(
-                        Number(this.dataset.id)
-                    );
-
-                }
-            );
-
+        button.addEventListener("click", function() {
+            completeTask(Number(this.dataset.id));
         });
 
+    });
 }
-
 
 function updateNextTask(activeTasks) {
 
     if (activeTasks.length === 0) {
 
         nextTask.innerHTML = `
-
             <p class="empty-next">
                 No tasks added yet.
             </p>
-
         `;
 
         return;
-
     }
 
+    const sorted = [...activeTasks].sort(function(a, b) {
+        return getScore(b) - getScore(a);
+    });
 
-    let sorted =
-        [...activeTasks].sort(function(a, b) {
-
-            let scoreA =
-                getScore(a);
-
-            let scoreB =
-                getScore(b);
-
-            return scoreB - scoreA;
-
-        });
-
-
-    let task = sorted[0];
-
+    const task = sorted[0];
 
     nextTask.innerHTML = `
-
         <div class="next-task">
 
             <div class="next-task-name">
@@ -365,126 +257,66 @@ function updateNextTask(activeTasks) {
             </div>
 
             <div class="next-task-info">
-
                 ${task.subject}
                 ·
                 ${formatDate(task.deadline)}
                 ·
-                ${task.hours} hour${
-                    task.hours == 1 ? "" : "s"
-                }
-
+                ${task.hours} hour${task.hours == 1 ? "" : "s"}
             </div>
 
             <div class="next-task-priority">
-
-                ${getPriorityText(task.priority)}
-                PRIORITY
-
+                ${getPriorityText(task.priority)} PRIORITY
             </div>
 
         </div>
-
     `;
-
 }
-
 
 function getScore(task) {
 
-    let today =
-        new Date();
+    const today = new Date();
+    const deadline = new Date(task.deadline);
 
-    let deadline =
-        new Date(task.deadline);
-
-    let difference =
-        deadline - today;
-
-    let days =
-        difference /
+    const days =
+        (deadline - today) /
         (1000 * 60 * 60 * 24);
 
-
-    let score =
-        task.priority * 30;
-
+    let score = task.priority * 30;
 
     if (days <= 1) {
-
         score += 40;
-
     } else if (days <= 3) {
-
         score += 30;
-
     } else if (days <= 7) {
-
         score += 20;
-
     } else {
-
         score += 10;
-
     }
 
-
-    score +=
-        Math.min(task.hours * 3, 20);
-
+    score += Math.min(task.hours * 3, 20);
 
     return score;
-
 }
-
-
-function formatDate(date) {
-
-    let d =
-        new Date(date);
-
-
-    return d.toLocaleDateString(
-        "en-IN",
-        {
-            day: "numeric",
-            month: "short"
-        }
-    );
-
-}
-
 
 function completeTask(id) {
 
-    tasks =
-        tasks.map(function(task) {
+    tasks = tasks.map(function(task) {
 
-            if (task.id === id) {
+        if (task.id === id) {
+            task.completed = !task.completed;
+        }
 
-                task.completed =
-                    !task.completed;
-
-            }
-
-            return task;
-
-        });
-
+        return task;
+    });
 
     saveTasks();
-
     displayTasks();
-
     showMessage("Task updated.");
-
 }
-
 
 function updateSubjects() {
 
-    let subjects = [];
-
+    const subjects = [];
 
     tasks.forEach(function(task) {
 
@@ -492,296 +324,134 @@ function updateSubjects() {
             task.subject &&
             !subjects.includes(task.subject)
         ) {
-
             subjects.push(task.subject);
-
         }
 
     });
 
-
-    let current =
-        subjectFilter.value;
-
+    const current = subjectFilter.value;
 
     subjectFilter.innerHTML = `
-
         <option value="all">
             All Subjects
         </option>
-
     `;
-
 
     subjects.sort();
 
-
     subjects.forEach(function(subject) {
 
-        let option =
-            document.createElement("option");
+        const option = document.createElement("option");
 
         option.value = subject;
-
         option.textContent = subject;
 
         subjectFilter.appendChild(option);
+    });
+
+    if (subjects.includes(current)) {
+        subjectFilter.value = current;
+    }
+}
+
+function updateSidebarSubjects() {
+
+    if (!sideSubjects) {
+        return;
+    }
+
+    const subjects = [];
+
+    tasks.forEach(function(task) {
+
+        if (
+            task.subject &&
+            !subjects.includes(task.subject)
+        ) {
+            subjects.push(task.subject);
+        }
 
     });
 
+    if (subjects.length === 0) {
 
-    if (subjects.includes(current)) {
+        sideSubjects.innerHTML =
+            "<span>No subjects yet</span>";
 
-        subjectFilter.value = current;
-
+        return;
     }
 
+    sideSubjects.innerHTML = "";
+
+    subjects.sort();
+
+    subjects.forEach(function(subject) {
+
+        const item = document.createElement("span");
+
+        item.textContent = subject;
+
+        sideSubjects.appendChild(item);
+    });
 }
 
+function getPriorityText(priority) {
 
-function openModal() {
-
-    modal.classList.remove("hidden");
-
-}
-
-
-function closeModal() {
-
-    modal.classList.add("hidden");
-
-}
-
-
-document
-    .getElementById("addTaskBtn")
-    .addEventListener(
-        "click",
-        openModal
-    );
-
-
-document
-    .getElementById("heroAddBtn")
-    .addEventListener(
-        "click",
-        openModal
-    );
-
-
-document
-    .getElementById("viewTasksBtn")
-    .addEventListener(
-        "click",
-        function() {
-
-            document
-                .getElementById("tasks")
-                .scrollIntoView({
-                    behavior: "smooth"
-                });
-
-        }
-    );
-
-
-document
-    .getElementById("close")
-    .addEventListener(
-        "click",
-        closeModal
-    );
-
-
-modal.addEventListener(
-    "click",
-    function(event) {
-
-        if (event.target === modal) {
-
-            closeModal();
-
-        }
-
+    if (priority === 3) {
+        return "HIGH";
     }
-);
 
+    if (priority === 2) {
+        return "MEDIUM";
+    }
 
-document
-    .getElementById("saveTask")
-    .addEventListener(
-        "click",
-        function() {
+    return "LOW";
+}
 
-            let name =
-                document
-                    .getElementById("taskName")
-                    .value
-                    .trim();
+function getPriorityClass(priority) {
 
+    if (priority === 3) {
+        return "priority-high";
+    }
 
-            let subject =
-                document
-                    .getElementById("taskSubject")
-                    .value
-                    .trim();
+    if (priority === 2) {
+        return "priority-medium";
+    }
 
+    return "priority-low";
+}
 
-            let type =
-                document
-                    .getElementById("taskType")
-                    .value;
+function formatDate(date) {
 
+    const d = new Date(date + "T00:00:00");
 
-            let deadline =
-                document
-                    .getElementById("taskDate")
-                    .value;
-
-
-            let hours =
-                Number(
-                    document
-                        .getElementById("taskHours")
-                        .value
-                );
-
-
-            let priority =
-                Number(
-                    document
-                        .getElementById("taskPriority")
-                        .value
-                );
-
-
-            if (
-                name === "" ||
-                subject === "" ||
-                deadline === "" ||
-                hours <= 0
-            ) {
-
-                alert(
-                    "Please fill in all the fields."
-                );
-
-                return;
-
-            }
-
-
-            let task = {
-
-                id: Date.now(),
-
-                name: name,
-
-                subject: subject,
-
-                type: type,
-
-                deadline: deadline,
-
-                hours: hours,
-
-                priority: priority,
-
-                completed: false
-
-            };
-
-
-            tasks.unshift(task);
-
-
-            saveTasks();
-
-            updateSubjects();
-
-            displayTasks();
-
-            closeModal();
-
-
-            document
-                .getElementById("taskName")
-                .value = "";
-
-
-            document
-                .getElementById("taskSubject")
-                .value = "";
-
-
-            document
-                .getElementById("taskDate")
-                .value = "";
-
-
-            document
-                .getElementById("taskHours")
-                .value = "";
-
-
-            showMessage(
-                "Task added."
-            );
-
-        }
-    );
-
+    return d.toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short"
+    });
+}
 
 function showMessage(message) {
 
-    let toast =
-        document.getElementById("toast");
+    const toast = document.getElementById("toast");
 
+    toast.textContent = message;
 
-    toast.textContent =
-        message;
-
-
-    toast.classList.remove(
-        "hidden"
-    );
-
+    toast.classList.remove("hidden");
 
     setTimeout(function() {
-
-        toast.classList.add(
-            "hidden"
-        );
-
+        toast.classList.add("hidden");
     }, 2000);
-
 }
 
+search.addEventListener("input", displayTasks);
 
-search.addEventListener(
-    "input",
-    displayTasks
-);
+subjectFilter.addEventListener("change", displayTasks);
 
+typeFilter.addEventListener("change", displayTasks);
 
-subjectFilter.addEventListener(
-    "change",
-    displayTasks
-);
-
-
-typeFilter.addEventListener(
-    "change",
-    displayTasks
-);
-
-
-sort.addEventListener(
-    "change",
-    displayTasks
-);
-
+sort.addEventListener("change", displayTasks);
 
 updateSubjects();
-
+updateSidebarSubjects();
 displayTasks();
